@@ -1,1 +1,180 @@
-404 bro
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 — Page Not Found · Cantdown MEji</title>
+  <link rel="icon" type="image/png" href="https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.digitalocean.com/&size=256"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0e0e14;
+      --card: #14141e;
+      --border: rgba(138,92,246,.18);
+      --purple: #8a5cf6;
+      --purple2: #a78bfa;
+      --pink: #f472b6;
+      --cyan: #22d3ee;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --glow: rgba(138,92,246,.3);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+
+    /* BG */
+    .blob { position: fixed; border-radius: 50%; filter: blur(120px); opacity: .18; pointer-events: none; }
+    .b1 { width: 500px; height: 500px; background: var(--purple); top: -100px; left: -100px; animation: d1 12s ease-in-out infinite alternate; }
+    .b2 { width: 400px; height: 400px; background: var(--pink); bottom: -60px; right: -60px; animation: d2 16s ease-in-out infinite alternate; }
+    @keyframes d1 { to { transform: translate(80px, 60px); } }
+    @keyframes d2 { to { transform: translate(-60px, -40px); } }
+
+    /* GRID LINES */
+    .grid-bg {
+      position: fixed; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(138,92,246,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(138,92,246,.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .content {
+      position: relative; z-index: 1; text-align: center;
+      padding: 2rem; max-width: 600px;
+    }
+
+    /* GLITCHY 404 */
+    .code-404 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(6rem, 20vw, 12rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -6px;
+      position: relative;
+      display: inline-block;
+      animation: fadeIn .8s ease both;
+    }
+    .code-404 span {
+      background: linear-gradient(135deg, var(--purple2), var(--pink), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .code-404::before {
+      content: '404';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--purple2), var(--pink), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glitch1 3s infinite; clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+      transform: translate(-4px, 0); opacity: .6;
+    }
+    .code-404::after {
+      content: '404';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--cyan), var(--purple2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glitch2 3s infinite; clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+      transform: translate(4px, 0); opacity: .6;
+    }
+    @keyframes glitch1 { 0%,90%,100%{transform:translate(-4px,0)} 93%{transform:translate(4px,0)} 96%{transform:translate(-8px,2px)} }
+    @keyframes glitch2 { 0%,90%,100%{transform:translate(4px,0)} 93%{transform:translate(-4px,0)} 96%{transform:translate(8px,-2px)} }
+
+    h1 {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 700;
+      letter-spacing: -.5px; margin-top: .5rem;
+      animation: fadeIn .9s ease .1s both;
+    }
+    .sub {
+      color: var(--muted); font-size: .85rem; margin-top: .8rem; line-height: 1.8;
+      animation: fadeIn 1s ease .2s both;
+    }
+
+    /* Terminal box */
+    .terminal {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.4rem 1.6rem; margin: 2rem 0; text-align: left;
+      font-size: .8rem; line-height: 2; color: var(--muted);
+      animation: fadeIn 1s ease .4s both;
+    }
+    .terminal .prompt { color: var(--green, #4ade80); }
+    .terminal .out { color: var(--purple2); }
+    .terminal .err { color: var(--pink); }
+    .terminal .cursor { display: inline-block; width: 8px; height: 1em; background: var(--purple2); animation: blink .8s step-end infinite; vertical-align: middle; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeIn 1s ease .55s both;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), #6d28d9);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 12px 28px; font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: .9rem; cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 28px var(--glow); transition: transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 36px var(--glow); }
+    .btn-ghost {
+      background: rgba(255,255,255,.05); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 12px 28px;
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: .9rem;
+      cursor: pointer; text-decoration: none; transition: background .2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.09); }
+
+    .footer-note {
+      position: fixed; bottom: 1.5rem; color: var(--muted); font-size: .72rem;
+      text-align: center; animation: fadeIn 1.2s ease .8s both;
+    }
+    .footer-note a { color: var(--purple2); text-decoration: none; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="grid-bg"></div>
+
+  <div class="content">
+    <div class="code-404"><span>404</span></div>
+    <h1>Page Not Found</h1>
+    <p class="sub">
+      Looks like this page got lost in the cloud somewhere between<br/>
+      AWS, DigitalOcean, and the void. 🌌
+    </p>
+
+    <div class="terminal">
+      <div><span class="prompt">meji@cantdown:~$</span> curl -I <span class="out">https://this-page.com</span></div>
+      <div><span class="err">HTTP/1.1 404 Not Found</span></div>
+      <div>Server: MEji-Node/2.4 (Pterodactyl)</div>
+      <div>X-Region: ap-southeast-1</div>
+      <div>X-Database: MongoDB · connected ✓</div>
+      <div><span class="prompt">meji@cantdown:~$</span> <span class="cursor"></span></div>
+    </div>
+
+    <div class="actions">
+      <a class="btn-primary" href="index.html">🏠 Back to Home</a>
+      <a class="btn-ghost" href="https://meji-app.vercel.app/" target="_blank">🚀 Open Dashboard</a>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <strong style="color:var(--purple2)">Cantdown MEji</strong> · Built by Tanpoint ·
+    <a href="https://t.me/mejiways" target="_blank">t.me/mejiways</a>
+  </div>
+
+</body>
+</html>
