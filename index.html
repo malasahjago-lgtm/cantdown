@@ -1,1 +1,699 @@
-cantdown
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cantdown MEji — Cloud Load Testing Platform</title>
+  <link rel="icon" type="image/png" href="https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.digitalocean.com/&size=256"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0e0e14;
+      --card: #14141e;
+      --card2: #1a1a28;
+      --border: rgba(138,92,246,0.18);
+      --purple: #8a5cf6;
+      --purple2: #a78bfa;
+      --pink: #f472b6;
+      --cyan: #22d3ee;
+      --green: #4ade80;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --glow: rgba(138,92,246,0.25);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── BG BLOBS ── */
+    .bg-blobs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.22;
+    }
+    .blob1 { width: 520px; height: 520px; background: var(--purple); top: -120px; left: -120px; animation: drift1 14s ease-in-out infinite alternate; }
+    .blob2 { width: 400px; height: 400px; background: var(--pink); bottom: 60px; right: -80px; animation: drift2 18s ease-in-out infinite alternate; }
+    .blob3 { width: 300px; height: 300px; background: var(--cyan); top: 40%; left: 50%; animation: drift3 20s ease-in-out infinite alternate; }
+    @keyframes drift1 { to { transform: translate(60px,80px) scale(1.1); } }
+    @keyframes drift2 { to { transform: translate(-60px,-40px) scale(1.15); } }
+    @keyframes drift3 { to { transform: translate(-80px,50px) scale(0.9); } }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(14,14,20,0.7); backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800;
+      letter-spacing: -0.5px; color: var(--text);
+    }
+    .nav-logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 8px var(--purple); }
+    .nav-links { display: flex; align-items: center; gap: 1.4rem; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--purple), #6d28d9);
+      color: #fff; border: none; border-radius: 8px;
+      padding: 8px 20px; font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.85rem; cursor: pointer; text-decoration: none;
+      box-shadow: 0 0 20px var(--glow); transition: transform .2s, box-shadow .2s;
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 0 30px var(--glow); }
+
+    /* ── LAYOUT ── */
+    .wrapper { position: relative; z-index: 1; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding-top: 64px; flex-direction: column;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(138,92,246,0.12); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 16px; font-size: 0.78rem;
+      color: var(--purple2); margin-bottom: 1.5rem;
+      animation: fadeUp .8s ease both;
+    }
+    .hero-badge .pulse { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; animation: blink 1.4s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity: .3; } }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 800; line-height: 1.08; letter-spacing: -2px;
+      animation: fadeUp .9s ease .1s both;
+    }
+    h1 .grad {
+      background: linear-gradient(135deg, var(--purple2), var(--pink), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      max-width: 580px; margin: 1.4rem auto 0; color: var(--muted);
+      font-size: 1.05rem; line-height: 1.7;
+      animation: fadeUp 1s ease .2s both;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; justify-content: center; margin-top: 2.2rem; flex-wrap: wrap;
+      animation: fadeUp 1s ease .35s both;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), #6d28d9);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 13px 30px; font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.95rem; cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 30px var(--glow); transition: transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 40px var(--glow); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 13px 30px;
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.95rem;
+      cursor: pointer; text-decoration: none; transition: background .2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.09); }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
+      margin-top: 3.5rem; animation: fadeUp 1s ease .5s both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--purple2), var(--pink));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── SECTION TITLES ── */
+    section { padding: 80px 0; }
+    .sec-label { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--purple2); margin-bottom: .6rem; }
+    .sec-title {
+      font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800; letter-spacing: -1px; line-height: 1.15;
+    }
+    .sec-sub { color: var(--muted); max-width: 520px; margin-top: .7rem; line-height: 1.7; }
+
+    /* ── CARDS GRID ── */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px,1fr)); gap: 1.2rem; margin-top: 2.5rem; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.6rem; position: relative; overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(138,92,246,.2); }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--purple), var(--pink), var(--cyan));
+      opacity: 0; transition: opacity .3s;
+    }
+    .card:hover::before { opacity: 1; }
+    .card-icon { width: 44px; height: 44px; border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .card-icon.purple { background: rgba(138,92,246,.15); }
+    .card-icon.pink { background: rgba(244,114,182,.15); }
+    .card-icon.cyan { background: rgba(34,211,238,.15); }
+    .card-icon.green { background: rgba(74,222,128,.15); }
+    .card h3 { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
+    .card p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
+
+    /* ── PROVIDER LOGOS ── */
+    .providers-section { text-align: center; }
+    .providers-grid {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 2.5rem;
+    }
+    .provider-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 20px; font-size: 0.88rem; font-weight: 600; color: var(--text);
+      transition: border-color .2s, transform .2s;
+    }
+    .provider-chip:hover { border-color: var(--purple); transform: translateY(-3px); }
+    .provider-chip img { width: 24px; height: 24px; object-fit: contain; }
+    .provider-chip svg { width: 24px; height: 24px; }
+
+    /* ── PROMO BANNER ── */
+    .promo-banner {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.5rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .promo-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(138,92,246,.08), rgba(244,114,182,.06));
+      pointer-events: none;
+    }
+    .promo-code {
+      background: rgba(138,92,246,.15); border: 1px dashed var(--purple);
+      border-radius: 8px; padding: 8px 16px; font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.1rem; color: var(--purple2); letter-spacing: 2px;
+    }
+    .promo-info h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; margin-bottom: .4rem; }
+    .promo-info p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── CRYPTO PAYMENT ── */
+    .crypto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1rem; margin-top: 2rem; }
+    .crypto-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.4rem 1.2rem; text-align: center;
+      transition: border-color .25s, transform .25s;
+    }
+    .crypto-card:hover { border-color: var(--purple); transform: translateY(-4px); }
+    .crypto-icon { font-size: 2rem; margin-bottom: .6rem; }
+    .crypto-card h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; }
+    .crypto-card p { color: var(--muted); font-size: .78rem; margin-top: .3rem; }
+
+    /* ── DEVELOPER / GIRLFRIEND SECTION ── */
+    .dev-section { padding: 80px 0; }
+    .dev-inner {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; align-items: center;
+    }
+    @media (max-width: 800px) { .dev-inner { grid-template-columns: 1fr; } }
+    .dev-text .tag { display: inline-block; background: rgba(244,114,182,.1); border: 1px solid rgba(244,114,182,.25); border-radius: 100px; padding: 4px 14px; font-size: .75rem; color: var(--pink); margin-bottom: 1rem; }
+    .dev-text h2 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -1px; line-height: 1.2; }
+    .dev-text p { color: var(--muted); line-height: 1.75; margin-top: .9rem; font-size: .93rem; }
+    .dev-text .dev-name { color: var(--purple2); font-weight: 700; }
+    .photo-mosaic { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: .8rem; }
+    .photo-mosaic .photo-item { border-radius: 14px; overflow: hidden; border: 2px solid var(--border); transition: transform .3s, border-color .3s; }
+    .photo-mosaic .photo-item:hover { transform: scale(1.03); border-color: var(--pink); }
+    .photo-mosaic .photo-item img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    .photo-mosaic .photo-item.wide { grid-column: span 2; }
+    .photo-mosaic .photo-item.wide img { height: 200px; }
+
+    /* ── SAFETY NOTICE ── */
+    .safety-notice {
+      background: linear-gradient(135deg, rgba(251,191,36,.06), rgba(239,68,68,.06));
+      border: 1px solid rgba(251,191,36,.25); border-radius: 14px;
+      padding: 1.4rem 1.6rem; margin: 2rem 0; display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .safety-notice .icon { font-size: 1.5rem; flex-shrink: 0; }
+    .safety-notice h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; color: #fbbf24; margin-bottom: .3rem; }
+    .safety-notice p { color: var(--muted); font-size: .84rem; line-height: 1.6; }
+
+    /* ── TELEGRAM / LINKS ── */
+    .links-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .link-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 18px; font-size: .85rem; font-weight: 600; color: var(--text);
+      text-decoration: none; transition: border-color .2s, background .2s;
+    }
+    .link-chip:hover { border-color: var(--purple); background: var(--card2); }
+    .link-chip.tg { border-color: rgba(0,136,204,.3); }
+    .link-chip.tg:hover { border-color: #0088cc; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2.5rem 0;
+      text-align: center; color: var(--muted); font-size: .82rem; line-height: 2;
+    }
+    footer strong { color: var(--purple2); }
+    footer a { color: var(--purple2); text-decoration: none; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FLOATING 3D DASHBOARD MOCKUP ── */
+    .mockup-wrap {
+      margin-top: 4rem; perspective: 1200px;
+      animation: fadeUp 1s ease .6s both;
+    }
+    .mockup-inner {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 1.4rem; max-width: 900px; margin: 0 auto;
+      transform: rotateX(6deg) rotateY(-2deg) scale(.94);
+      box-shadow: 0 40px 100px rgba(0,0,0,.5), 0 0 60px rgba(138,92,246,.12);
+      transition: transform .4s ease;
+    }
+    .mockup-inner:hover { transform: rotateX(2deg) rotateY(0deg) scale(.97); }
+    .mockup-bar { display: flex; gap: 6px; margin-bottom: 1rem; }
+    .mockup-bar span { width: 12px; height: 12px; border-radius: 50%; }
+    .mockup-bar .r { background: #ff5f57; }
+    .mockup-bar .y { background: #febc2e; }
+    .mockup-bar .g { background: #28c840; }
+    .mockup-grid { display: grid; grid-template-columns: 140px 1fr 200px; gap: .8rem; }
+    .mock-sidebar { background: rgba(255,255,255,.03); border-radius: 10px; padding: 1rem; }
+    .mock-nav-item { height: 12px; border-radius: 6px; background: rgba(255,255,255,.07); margin-bottom: 8px; }
+    .mock-nav-item.active { background: rgba(138,92,246,.35); }
+    .mock-main { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+    .mock-card { background: rgba(255,255,255,.04); border-radius: 10px; padding: 1rem; }
+    .mock-num { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--purple2); }
+    .mock-label { font-size: .65rem; color: var(--muted); margin-top: 3px; }
+    .mock-bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 50px; margin-top: 8px; }
+    .mock-bar { width: 8px; background: rgba(138,92,246,.5); border-radius: 3px; }
+    .mock-right { display: flex; flex-direction: column; gap: .7rem; }
+    .mock-event { background: rgba(255,255,255,.04); border-radius: 10px; padding: .8rem; }
+    .mock-event-title { font-size: .7rem; font-weight: 600; margin-bottom: 4px; }
+    .mock-event-sub { font-size: .62rem; color: var(--muted); }
+
+    /* Mobile nav toggle */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .mockup-grid { grid-template-columns: 1fr; }
+      .mock-sidebar, .mock-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BG Blobs -->
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="dot"></div>
+    MEji <span style="font-weight:400;color:var(--muted);font-size:.85rem">/ Cantdown</span>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#providers">Infrastructure</a>
+    <a href="#crypto">Pricing</a>
+    <a href="#developer">About</a>
+    <a href="https://meji-app.vercel.app/" target="_blank">Dashboard</a>
+  </div>
+  <a class="nav-cta" href="https://meji-app.vercel.app/" target="_blank">Start Free →</a>
+</nav>
+
+<!-- WRAPPER -->
+<div class="wrapper">
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="pulse"></span>
+        Platform is Live & Running
+      </div>
+      <h1>
+        Cantdown <span class="grad">MEji</span><br/>
+        Load Testing, Simplified
+      </h1>
+      <p class="hero-sub">
+        Stress test your servers with real distributed traffic. Multi-region infrastructure. 
+        Crypto auto-payment. Start in seconds — no credit card needed.
+      </p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="https://meji-app.vercel.app/" target="_blank">🚀 Open Dashboard</a>
+        <a class="btn-ghost" href="https://t.me/mejiways" target="_blank">📢 Telegram Channel</a>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-num">30s</div>
+          <div class="stat-label">Free Max Time</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">20%</div>
+          <div class="stat-label">Free Power Unlock</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">HFREE</div>
+          <div class="stat-label">Promo Code</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Cloud Providers</div>
+        </div>
+      </div>
+
+      <!-- 3D Mockup -->
+      <div class="mockup-wrap">
+        <div class="mockup-inner">
+          <div class="mockup-bar">
+            <span class="r"></span><span class="y"></span><span class="g"></span>
+          </div>
+          <div class="mockup-grid">
+            <div class="mock-sidebar">
+              <div class="mock-nav-item active"></div>
+              <div class="mock-nav-item"></div>
+              <div class="mock-nav-item"></div>
+              <div class="mock-nav-item"></div>
+              <div class="mock-nav-item" style="margin-top:1.5rem"></div>
+              <div class="mock-nav-item"></div>
+            </div>
+            <div class="mock-main">
+              <div class="mock-card">
+                <div class="mock-num">16,892</div>
+                <div class="mock-label">Total Requests Sent</div>
+                <div class="mock-bar-chart">
+                  <div class="mock-bar" style="height:30px"></div>
+                  <div class="mock-bar" style="height:45px;background:rgba(167,139,250,.7)"></div>
+                  <div class="mock-bar" style="height:25px"></div>
+                  <div class="mock-bar" style="height:50px;background:rgba(167,139,250,.7)"></div>
+                  <div class="mock-bar" style="height:35px"></div>
+                  <div class="mock-bar" style="height:48px;background:rgba(167,139,250,.7)"></div>
+                  <div class="mock-bar" style="height:20px"></div>
+                </div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-num">4.8h</div>
+                <div class="mock-label">Total Session Time</div>
+                <div class="mock-bar-chart">
+                  <div class="mock-bar" style="height:40px;background:rgba(244,114,182,.5)"></div>
+                  <div class="mock-bar" style="height:28px;background:rgba(244,114,182,.5)"></div>
+                  <div class="mock-bar" style="height:50px;background:rgba(244,114,182,.7)"></div>
+                  <div class="mock-bar" style="height:35px;background:rgba(244,114,182,.5)"></div>
+                  <div class="mock-bar" style="height:44px;background:rgba(244,114,182,.7)"></div>
+                </div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-num">98%</div>
+                <div class="mock-label">Uptime SLA</div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-num">3.78ms</div>
+                <div class="mock-label">Avg Response</div>
+              </div>
+            </div>
+            <div class="mock-right">
+              <div class="mock-event">
+                <div class="mock-event-title" style="color:var(--purple2)">🟣 Load Test Running</div>
+                <div class="mock-event-sub">Target: api.example.com — 200 VU</div>
+              </div>
+              <div class="mock-event">
+                <div class="mock-event-title">📊 Weekly Report</div>
+                <div class="mock-event-sub">+36.1% vs last week</div>
+              </div>
+              <div class="mock-event">
+                <div class="mock-event-title">💾 MongoDB Connected</div>
+                <div class="mock-event-sub">Cluster healthy · 0ms latency</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FREE PROMO -->
+    <section id="promo" class="reveal">
+      <div class="promo-banner">
+        <div class="promo-info">
+          <h3>🎉 Free User Promo — Register &amp; Unlock</h3>
+          <p>
+            New accounts get <strong>30 seconds max test time</strong> and access to <strong>20% of MEji's power</strong> for free.<br/>
+            Use code <strong>HFREE</strong> at checkout to unlock the method. API access is available in the documentation.
+          </p>
+          <div class="links-row">
+            <a class="link-chip" href="https://meji-app.vercel.app/" target="_blank">🌐 Go to Dashboard</a>
+            <a class="link-chip tg" href="https://t.me/mejiways" target="_blank">✈️ Telegram: @mejiways</a>
+          </div>
+        </div>
+        <div class="promo-code">HFREE</div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="reveal">
+      <div class="sec-label">Platform</div>
+      <h2 class="sec-title">Everything you need to<br/><span style="color:var(--purple2)">break your server limits</span></h2>
+      <p class="sec-sub">MEji combines modern cloud infrastructure with intuitive tooling for developers and DevOps teams.</p>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon purple">⚡</div>
+          <h3>Real Distributed Load</h3>
+          <p>Generate traffic from multiple cloud regions simultaneously. True distributed testing — not simulated from a single node.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon cyan">🌍</div>
+          <h3>Multi-Region Nodes</h3>
+          <p>Nodes spawned across AWS, DigitalOcean, Linode, and Alibaba Cloud for maximum geographic coverage.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon pink">💳</div>
+          <h3>Crypto Auto-Payment</h3>
+          <p>Purchase a plan → pay with crypto → your plan activates automatically. No manual approval, no waiting.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">🗄️</div>
+          <h3>MongoDB Integration</h3>
+          <p>Results and session data stored in MongoDB. Query your test history, build dashboards, export reports.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon purple">🔑</div>
+          <h3>API Access</h3>
+          <p>Full REST API. Get your API key from the Profile section in the dashboard. Automate tests in your CI/CD pipeline.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon cyan">🦅</div>
+          <h3>Pterodactyl Panel</h3>
+          <p>Server management powered by Pterodactyl. Deploy, monitor, and manage your test servers from one panel.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROVIDERS -->
+    <section id="providers" class="providers-section reveal">
+      <div class="sec-label">Infrastructure</div>
+      <h2 class="sec-title">Powered by world-class<br/><span style="color:var(--cyan)">cloud providers</span></h2>
+      <p class="sec-sub" style="margin:0 auto">MEji runs on a fleet of servers across the best infrastructure providers on the planet.</p>
+      <div class="providers-grid">
+
+        <!-- AWS -->
+        <div class="provider-chip">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.76 10.47c0 .31.03.56.1.74.07.18.17.38.3.59.05.08.07.16.07.23 0 .1-.06.2-.19.3l-.62.41a.47.47 0 01-.26.09c-.1 0-.2-.05-.3-.14a3.1 3.1 0 01-.36-.47 7.87 7.87 0 01-.31-.59A3.6 3.6 0 014 9.94a3.46 3.46 0 01.95-2.51 3.27 3.27 0 012.44-.98c.34 0 .69.05 1.06.14.36.1.73.2 1.12.32V6.3a.46.46 0 01.1-.33.5.5 0 01.36-.1h.83a.5.5 0 01.36.1.46.46 0 01.1.33v5.5c0 .46.1.8.3 1 .2.2.5.3.93.3.14 0 .28-.01.44-.05.15-.03.28-.07.38-.11v-6.4a.46.46 0 01.1-.33.5.5 0 01.36-.1h.83c.15 0 .27.03.36.1.09.07.1.18.1.33v8.56c0 .14-.03.26-.1.33a.5.5 0 01-.36.1h-.77a.5.5 0 01-.36-.1.46.46 0 01-.1-.33v-.39c-.17.12-.35.23-.55.32-.2.1-.43.14-.67.14-.46 0-.88-.1-1.25-.3a2.1 2.1 0 01-.85-.87 2.7 2.7 0 01-.31-1.32v-.41zm0 0" fill="#F90"/>
+            <path d="M20.7 16.8a19.5 19.5 0 01-4.88.62 19.26 19.26 0 01-9.22-2.35c-.24-.13-.03-.32.22-.21a26.22 26.22 0 0010.7 2.07 26 26 0 004.05-.34c.35-.07.65.27.13.21zm.74-.84c-.33-.42-2.18-.2-3.01-.1-.25.03-.29-.19-.06-.35 1.47-1.03 3.88-.73 4.16-.39.28.35-.08 2.77-1.45 3.93-.21.18-.41.08-.32-.15.31-.77 1.01-2.51.68-2.94zm0 0" fill="#F90"/>
+          </svg>
+          Amazon AWS
+        </div>
+
+        <!-- DigitalOcean -->
+        <div class="provider-chip">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1.5C6.2 1.5 1.5 6.2 1.5 12c0 5.8 4.7 10.5 10.5 10.5V19.2c-3.97 0-7.2-3.23-7.2-7.2 0-3.97 3.23-7.2 7.2-7.2 3.97 0 7.2 3.23 7.2 7.2H22.5C22.5 6.2 17.8 1.5 12 1.5zm0 17.7v3.3H8.7V19.2zm-3.3 3.3H5.4v-3.3h3.3zm-3.3-3.3H2.1V15.9h3.3z" fill="#0080FF"/>
+          </svg>
+          DigitalOcean
+        </div>
+
+        <!-- Linode / Akamai -->
+        <div class="provider-chip">
+          <svg viewBox="0 0 24 24" fill="#00A95C" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3h4v15h10v3H3zm6 0h4v12h7v3H9z"/>
+          </svg>
+          Linode / Akamai
+        </div>
+
+        <!-- Alibaba Cloud -->
+        <div class="provider-chip">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="8" width="20" height="8" rx="4" fill="#FF6A00"/>
+            <rect x="7" y="10" width="10" height="4" rx="2" fill="#fff"/>
+          </svg>
+          Alibaba Cloud
+        </div>
+
+        <!-- Pterodactyl -->
+        <div class="provider-chip">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L4 7l1 5 7 4 7-4 1-5z" fill="#7C3AED" opacity=".9"/>
+            <path d="M5 12l7 4 7-4v5l-7 4-7-4z" fill="#5B21B6"/>
+          </svg>
+          Pterodactyl
+        </div>
+
+        <!-- MongoDB -->
+        <div class="provider-chip">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.3 2 7 7.06 7 9.5c0 2.5 1.4 4.2 3.2 5l.8 6.5h2l.8-6.5c1.8-.8 3.2-2.5 3.2-5C17 7.06 15.7 2 12 2zm0 11.8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="#4DB33D"/>
+          </svg>
+          MongoDB
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CRYPTO PAYMENT -->
+    <section id="crypto" class="reveal">
+      <div class="sec-label">Payments</div>
+      <h2 class="sec-title">⚡ Automatic Crypto<br/><span style="color:var(--green)">Payment Gateway</span></h2>
+      <p class="sec-sub">Buy a plan → pay with crypto → your account upgrades <strong>instantly</strong>. No middleman, no manual review.</p>
+      <div class="crypto-grid">
+        <div class="crypto-card">
+          <div class="crypto-icon">₿</div>
+          <h4>Bitcoin</h4>
+          <p>BTC payments accepted</p>
+        </div>
+        <div class="crypto-card">
+          <div class="crypto-icon">Ξ</div>
+          <h4>Ethereum</h4>
+          <p>ETH &amp; ERC-20 tokens</p>
+        </div>
+        <div class="crypto-card">
+          <div class="crypto-icon">◎</div>
+          <h4>USDT / USDC</h4>
+          <p>Stablecoins supported</p>
+        </div>
+        <div class="crypto-card">
+          <div class="crypto-icon">🔷</div>
+          <h4>BNB</h4>
+          <p>Binance Smart Chain</p>
+        </div>
+        <div class="crypto-card">
+          <div class="crypto-icon">🌐</div>
+          <h4>Other Altcoins</h4>
+          <p>More options available</p>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;padding:1rem 1.4rem;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:.88rem;color:var(--muted);line-height:1.7;">
+        💡 <strong>How it works:</strong> Go to the <em>Purchase</em> tab → click <em>Purchase</em> → you'll be redirected to a payment link → after payment is confirmed, your plan is automatically activated on your account. No manual steps needed.
+      </div>
+    </section>
+
+    <!-- SAFETY NOTICE -->
+    <section class="reveal">
+      <div class="safety-notice">
+        <div class="icon">⚠️</div>
+        <div>
+          <h4>Internet Safety Reminder — For Young Users</h4>
+          <p>
+            MEji is a professional platform for developers and IT engineers. We care about internet safety for everyone.<br/>
+            <strong>If you are under 18 years old</strong>, please always be mindful of the websites you visit online.
+            Avoid accessing adult content sites such as <strong>pornhub.com</strong> — they are restricted to adults only (18+) for good reason.
+            Stay safe, learn responsibly, and use technology for education and creativity. 🌟
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEVELOPER SECTION -->
+    <section id="developer" class="dev-section reveal">
+      <div class="dev-inner">
+        <div class="dev-text">
+          <div class="tag">👨‍💻 Developer Behind MEji</div>
+          <h2>Built by <span class="dev-name">Tanpoint</span><br/>— with passion &amp; ☕</h2>
+          <p>
+            <strong class="dev-name">Tanpoint</strong> is the sole developer and architect of the MEji platform.
+            From the distributed load engine to the crypto payment gateway, every line of code is crafted with care
+            to give developers the best cloud testing experience possible.
+          </p>
+          <p style="margin-top:.8rem;">
+            And yes — behind every great developer is someone even greater. 
+            Here's a little glimpse into Tanpoint's world outside the terminal. 🧡
+            She's absolutely stunning — sweet, stylish, and always glowing — whether at a rooftop bar or just casually out in town.
+            She's the one who makes the late-night coding sessions worth it. 💕
+          </p>
+          <div class="links-row">
+            <a class="link-chip tg" href="https://t.me/mejiways" target="_blank">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#0088cc"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.18l-2.03 9.57c-.15.68-.55.85-1.11.53l-3.07-2.27-1.48 1.43c-.16.16-.3.3-.62.3l.22-3.15 5.76-5.2c.25-.22-.05-.35-.39-.12L5.9 14.28l-3.04-.95c-.66-.21-.67-.66.14-.97l11.88-4.58c.54-.2 1.02.13.68.4z"/></svg>
+              t.me/mejiways
+            </a>
+            <a class="link-chip" href="https://meji-app.vercel.app/" target="_blank">🚀 Launch App</a>
+          </div>
+        </div>
+
+        <div class="photo-mosaic">
+          <div class="photo-item wide">
+            <img src="https://i.pinimg.com/736x/6c/a2/d2/6ca2d201dac19fdef57503d473032f93.jpg" alt="Tanpoint's girlfriend — bar night"/>
+          </div>
+          <div class="photo-item">
+            <img src="https://i.pinimg.com/736x/b3/70/b5/b370b54b51d36d1786b03352475b1456.jpg" alt="Sweet moment"/>
+          </div>
+          <div class="photo-item">
+            <img src="https://i.pinimg.com/736x/f1/45/b8/f145b8e78869bac0aca023bebf66715f.jpg" alt="Glowing"/>
+          </div>
+          <div class="photo-item">
+            <img src="https://i.pinimg.com/736x/e7/f3/bd/e7f3bd24323db337175c1a1a01f5e1b8.jpg" alt="Bar night"/>
+          </div>
+          <div class="photo-item">
+            <img src="https://i.pinimg.com/736x/95/a1/a5/95a1a59429ab70a3e034509550e8cb42.jpg" alt="Lovely"/>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+</div><!-- /wrapper -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>
+      <strong>Cantdown MEji</strong> — Professional Load Testing Platform<br/>
+      Built by <strong>Tanpoint</strong> · Infrastructure: AWS · DigitalOcean · Linode · Alibaba Cloud · Pterodactyl<br/>
+      Database: MongoDB · Payments: Crypto Auto-Gateway<br/>
+      <a href="https://t.me/mejiways" target="_blank">📢 Telegram: t.me/mejiways</a> ·
+      <a href="https://meji-app.vercel.app/" target="_blank">🌐 meji-app.vercel.app</a><br/>
+      <span style="font-size:.75rem;color:#475569;">© 2024 MEji Platform. All rights reserved. Use responsibly. This platform is for authorized load testing only.</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
